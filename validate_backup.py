@@ -1,5 +1,4 @@
-import os
-from flask import Flask, request, jsonify, Response, make_response, send_from_directory
+from flask import Flask, request, jsonify, Response, make_response
 from datetime import datetime
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -12,7 +11,7 @@ from app import generate_frames
 
 ca = certifi.where()
 
-app = Flask(__name__, static_folder='frontend/build', static_url_path='/')
+app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Enable CORS for the app
 
 # cache control
@@ -439,32 +438,6 @@ def get_todays_alerts():
         return jsonify(alerts), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-from app import process_base64_frame
-
-@app.route('/process_frame', methods=['POST'])
-def process_frame():
-    data = request.json
-    image_b64 = data.get('image')
-    username = data.get('username')
-    ride_id = data.get('ride_id')
-    lat = data.get('lat')
-    lng = data.get('lng')
-    
-    if not image_b64:
-        return jsonify({"error": "No image provided"}), 400
-        
-    result = process_base64_frame(image_b64, username, ride_id, lat, lng)
-    return jsonify(result), 200
-
-# Serve React App
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5001)

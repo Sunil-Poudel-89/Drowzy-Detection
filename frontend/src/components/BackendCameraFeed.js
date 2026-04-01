@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const BACKEND_URL = "http://localhost:5001/video_feed"; // 
-
+import config from '../config';
+const BACKEND_URL = `${config.BACKEND_URL}/video_feed`;
 function BackendCameraFeed() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -33,7 +33,7 @@ function BackendCameraFeed() {
         </div>
         <div className="camera-info text-sm text-gray-600 mt-4">
           <p><center>DRIVE SAFE</center></p>
-          
+
         </div>
       </div>
     </div>

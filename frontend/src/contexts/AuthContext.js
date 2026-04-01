@@ -10,11 +10,21 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // Check for stored user data on mount
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const fetchSession = async () => {
+      try {
+        const storedUser = localStorage.getItem("user")
+        if (storedUser) {
+          setUser(JSON.parse(storedUser))
+        }
+      } catch (error) {
+        console.error("Failed to parse stored user:", error)
+        localStorage.removeItem("user")
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setIsLoading(false)
+    
+    fetchSession()
   }, [])
 
   const login = (userData) => {

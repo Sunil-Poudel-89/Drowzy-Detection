@@ -205,3 +205,71 @@
   width: 30px;
   height: 30px;
 }
+
+/* SOS Emergency Styles */
+.sos-critical {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.4) !important;
+  animation: bgPulse 2s infinite;
+}
+
+@keyframes bgPulse {
+  0% { background: rgba(15, 23, 42, 0.6); }
+  50% { background: rgba(153, 27, 27, 0.4); }
+  100% { background: rgba(15, 23, 42, 0.6); }
+}
+
+.sos-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(153, 27, 27, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.sos-content h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  animation: textShake 0.1s infinite;
+}
+
+.sos-content p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  opacity: 0.9;
+}
+
+.sos-pulse {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  margin: 2rem auto;
+  animation: sosRing 1.5s infinite;
+}
+
+@keyframes sosRing {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes textShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 2px); }
+  75% { transform: translate(2px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+

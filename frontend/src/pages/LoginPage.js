@@ -2,8 +2,9 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import Header from "../components/Header"
-import { Mail, Lock, User, Shield, CheckCircle, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Mail, Lock, User, CheckCircle, Eye, EyeOff, AlertCircle } from "lucide-react"
 import "./LoginPage.css"
+import config from "../config"
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,14 +13,12 @@ function LoginPage() {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
-    role: "user",
   })
   const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
   })
   const [error, setError] = useState("")
 
@@ -37,7 +36,7 @@ function LoginPage() {
     setIsLoading(true)
     setError("")
     try {
-      const res = await fetch("http://localhost:5001/login", {
+      const res = await fetch(`${config.BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -47,11 +46,9 @@ function LoginPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Login failed")
-      if (data.user && data.user.role !== loginData.role) {
-        throw new Error("Role mismatch: Please select the correct role for this account.")
-      }
-      login(data.user || { name: 'User', email: loginData.email, role: loginData.role })
-      navigate(loginData.role === "admin" ? "/admin" : "/dashboard")
+
+      login(data.user)
+      navigate(data.user.role === "admin" ? "/admin" : "/dashboard")
     } catch (err) {
       setError(err.message)
     } finally {
@@ -68,22 +65,21 @@ function LoginPage() {
     }
     setIsLoading(true)
     try {
-      const res = await fetch("http://localhost:5001/register", {
+      const res = await fetch(`${config.BACKEND_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: registerData.name,
           email: registerData.email,
           password: registerData.password,
-          role: registerData.role,
           contactNumber: "0000000000",
           vehicleNumber: "TEST-001"
         }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Registration failed")
-      
-      const loginRes = await fetch("http://localhost:5001/login", {
+
+      const loginRes = await fetch(`${config.BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -93,8 +89,8 @@ function LoginPage() {
       })
       const loginDataRes = await loginRes.json()
       if (!loginRes.ok) throw new Error(loginDataRes.error || "Login after registration failed")
-      login(loginDataRes.user || { name: registerData.name, email: registerData.email, role: registerData.role })
-      navigate(registerData.role === "admin" ? "/admin" : "/dashboard")
+      login(loginDataRes.user)
+      navigate(loginDataRes.user.role === "admin" ? "/admin" : "/dashboard")
     } catch (err) {
       setError(err.message)
     } finally {
@@ -108,7 +104,7 @@ function LoginPage() {
 
       <main className="container auth-container">
         <div className="auth-box glass-panel animate-slide-up">
-          
+
           <div className="auth-header text-center">
             <h1 className="auth-title mt-4">Welcome Back</h1>
             <p className="auth-subtitle">Sign in to access your fatigue detection dashboard</p>
@@ -178,22 +174,6 @@ function LoginPage() {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="role" className="label">Login as</label>
-                  <div className="input-wrapper">
-                    <Shield className="input-icon" size={18} />
-                    <select
-                      id="role"
-                      className="input with-icon cursor-pointer select-field"
-                      value={loginData.role}
-                      onChange={(e) => setLoginData({ ...loginData, role: e.target.value })}
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Administrator</option>
-                    </select>
-                  </div>
-                </div>
-
                 <button type="submit" className="btn btn-primary w-full mt-4" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign In"}
                 </button>
@@ -205,7 +185,7 @@ function LoginPage() {
                 <div className="form-group">
                   <label htmlFor="name" className="label">Full Name</label>
                   <div className="input-wrapper">
-                     <User className="input-icon" size={18} />
+                    <User className="input-icon" size={18} />
                     <input
                       id="name"
                       type="text"
@@ -265,22 +245,6 @@ function LoginPage() {
                         required
                       />
                     </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="reg-role" className="label">Register as</label>
-                  <div className="input-wrapper">
-                     <Shield className="input-icon" size={18} />
-                    <select
-                      id="reg-role"
-                      className="input with-icon cursor-pointer select-field"
-                      value={registerData.role}
-                      onChange={(e) => setRegisterData({ ...registerData, role: e.target.value })}
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Administrator</option>
-                    </select>
                   </div>
                 </div>
 

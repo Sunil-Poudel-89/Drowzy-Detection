@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import config from "../config";
 
-const BACKEND_URL = "http://localhost:5000/video_feed"; // Change if backend runs elsewhere
+const BACKEND_URL = `${config.BACKEND_URL}/video_feed`;
 
 function BackendCameraFeed() {
   const [loading, setLoading] = useState(true);
@@ -40,4 +41,4 @@ function BackendCameraFeed() {
   );
 }
 
-export default BackendCameraFeed; 
+export default BackendCameraFeed;
